@@ -1,0 +1,49 @@
+{
+  "prettier.enable": false,
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "never",
+    "source.fixAll.stylelint": "always"
+  },
+  // Enable the ESlint flat config support
+  "eslint.useFlatConfig": true,
+  // Silent the stylistic rules in you IDE, but still auto fix them
+  "eslint.rules.customizations": [
+    { "rule": "style/*", "severity": "off" },
+    { "rule": "format/*", "severity": "off" },
+    { "rule": "*-indent", "severity": "off" },
+    { "rule": "*-spacing", "severity": "off" },
+    { "rule": "*-spaces", "severity": "off" },
+    { "rule": "*-order", "severity": "off" },
+    { "rule": "*-dangle", "severity": "off" },
+    { "rule": "*-newline", "severity": "off" },
+    { "rule": "*quotes", "severity": "off" },
+    { "rule": "*semi", "severity": "off" }
+  ],
+
+  // Enable eslint for all supported languages
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact",
+    "vue",
+    "html",
+    "markdown",
+    "json",
+    "jsonc",
+    "yaml",
+    "toml"
+  ],
+  "stylelint.validate": [
+    "css",
+    "scss",
+    "vue"
+  ],
+  /**
+   * 解决 unocss @apply 警告问题
+   * @see https://github.com/tailwindlabs/tailwindcss/discussions/5258#discussioncomment-1979394
+   */
+  "scss.lint.unknownAtRules": "ignore"
+}

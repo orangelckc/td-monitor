@@ -1,0 +1,50 @@
+{
+  "name": "three-dog-monitor",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev": "pnpm run build:icon && vite",
+    "build": "pnpm run build:icon && vite build",
+    "build:icon": "tauri icon ./src-tauri/assets/icon.png",
+    "lint": "eslint . --fix",
+    "preview": "vite preview",
+    "prepare": "pnpm simple-git-hooks",
+    "tauri": "tauri"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "^1.5.6",
+    "axios": "^1.7.2",
+    "axios-tauri-api-adapter": "^0.2.1",
+    "dayjs": "^1.11.11",
+    "nanoid": "^5.0.7",
+    "pinia": "^2.1.7",
+    "pinia-plugin-persistedstate": "^3.2.1",
+    "vue": "^3.4.29"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^2.21.1",
+    "@iconify/json": "^2.2.220",
+    "@tauri-apps/cli": "^1.5.14",
+    "@types/node": "^20.14.6",
+    "@unocss/eslint-config": "^0.61.0",
+    "@unocss/preset-icons": "^0.61.0",
+    "@unocss/reset": "^0.61.0",
+    "@vitejs/plugin-vue": "^5.0.5",
+    "eslint": "^9.5.0",
+    "lint-staged": "^15.2.7",
+    "sass": "^1.77.6",
+    "simple-git-hooks": "^2.11.1",
+    "typescript": "^5.4.5",
+    "unocss": "^0.61.0",
+    "unplugin-auto-import": "^0.17.6",
+    "vite": "^5.3.1",
+    "vue-tsc": "^2.0.21"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm lint-staged"
+  },
+  "lint-staged": {
+    "*": "eslint --fix"
+  }
+}
