@@ -61,7 +61,7 @@ onUnmounted(() => {
         <el-input v-model="loginForm.account" placeholder="账号" autofocus />
       </el-form-item>
       <el-form-item prop="password">
-        <el-input v-model="loginForm.password" placeholder="密码" type="password" />
+        <el-input v-model="loginForm.password" placeholder="密码" type="password" @keyup.enter="handleSubmit" />
       </el-form-item>
       <el-form-item class="mt-6">
         <el-button type="primary" class="w-full" :loading="isLoading" @click="handleSubmit">

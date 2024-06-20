@@ -7,7 +7,7 @@
     "withGlobalTauri": false
   },
   "package": {
-    "productName": "three-dog-monitor",
+    "productName": "三狗监控",
     "version": "../package.json"
   },
   "tauri": {
@@ -41,7 +41,7 @@
     },
     "bundle": {
       "active": true,
-      "identifier": "com.three-dog-monitor",
+      "identifier": "com.td-monitor",
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
