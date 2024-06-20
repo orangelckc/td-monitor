@@ -14,10 +14,15 @@ tauri-build = { version = "1.4", features = [] }
 
 [dependencies]
 tauri = { version = "1.4", features = [
+  "window-start-dragging",
+  "window-set-size",
+  "window-set-decorations",
+  "window-set-resizable",
+  "dialog-message",
+  "dialog-ask",
+  "window-hide",
   "shell-open",
   "clipboard-write-text",
-  "window-start-dragging",
-  "window-set-always-on-top",
   "http-all",
   "macos-private-api",
   "system-tray",

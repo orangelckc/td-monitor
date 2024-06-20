@@ -13,9 +13,7 @@
   "tauri": {
     "macOSPrivateApi": true,
     "allowlist": {
-      "all": false,
       "shell": {
-        "all": false,
         "open": true
       },
       "http": {
@@ -27,11 +25,17 @@
         ]
       },
       "window": {
-        "setAlwaysOnTop": true,
+        "hide": true,
+        "setDecorations": true,
+        "setSize": true,
+        "setResizable": true,
         "startDragging": true
       },
+      "dialog": {
+        "message": true,
+        "ask": true
+      },
       "clipboard": {
-        "all": false,
         "writeText": true
       }
     },
@@ -67,12 +71,16 @@
       {
         "label": "main",
         "title": "三狗监控",
-        "width": 375,
-        "height": 600
+        "resizable": false,
+        "center": true,
+        "titleBarStyle": "Overlay",
+        "width": 280,
+        "height": 366
       }
     ],
     "systemTray": {
-      "iconPath": "assets/tray.png"
+      "iconPath": "assets/tray.png",
+      "iconAsTemplate": true
     }
   }
 }

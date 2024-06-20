@@ -1,9 +1,11 @@
+import { message } from '@tauri-apps/api/dialog'
 import dayjs from 'dayjs'
 import { ElMessage } from 'element-plus'
 
 import type { ILoginParams, ILoginResponse } from '@/apis'
 
 import { login, status, toggle } from '@/apis'
+import { formatTime } from '@/utils/tools'
 
 export const useAppStore = defineStore('app', () => {
   const tokenInfo = reactive<ILoginResponse>({
@@ -32,11 +34,9 @@ export const useAppStore = defineStore('app', () => {
         token: data.token,
         expires: dayjs().add(9, 'hour').toISOString(),
       })
-
-      ElMessage.success('登陆成功')
     }
     catch (error: any) {
-      ElMessage.error(error?.message)
+      ElMessage.error(error?.message || '登录失败')
     }
     finally {
       isLoading.value = false
@@ -45,6 +45,9 @@ export const useAppStore = defineStore('app', () => {
 
   let counter: NodeJS.Timeout
   function startCountDown() {
+    if (counter)
+      clearInterval(counter)
+
     counter = setInterval(() => {
       leftTime.value--
       if (leftTime.value <= 0) {
@@ -55,27 +58,39 @@ export const useAppStore = defineStore('app', () => {
     }, 1000)
   }
 
-  const handleSwitch = async () => {
+  const handleSwitch = async (state: boolean) => {
     try {
       isLoading.value = true
-      const { data } = await toggle(isOn.value)
+      const { data } = await toggle(state)
 
       if (!data)
         return
 
       isOn.value = data.is_paused === 0
-      ElMessage.success(isOn.value ? '开启成功' : '关闭成功')
+      const time = formatTime(data.remaining_time)
+      const title = state ? '开启成功' : '关闭成功'
+      const text = `剩余时间: ${time.hours}h${time.minutes}m${time.seconds}s`
 
       if (data.is_paused === 1) {
-        clearInterval(counter)
-        return
+        counter && clearInterval(counter)
       }
-
-      startCountDown()
+      else {
+        message(text, {
+          title,
+          type: 'info',
+          okLabel: '关闭',
+        })
+        startCountDown()
+      }
     }
     catch (error: any) {
       console.error(error)
       ElMessage.error('切换失败')
+      message('', {
+        title: '切换失败',
+        type: 'error',
+        okLabel: '关闭',
+      })
     }
     finally {
       isLoading.value = false
@@ -84,6 +99,7 @@ export const useAppStore = defineStore('app', () => {
 
   const checkStatus = async () => {
     try {
+      isLoading.value = true
       const { data } = await status()
       if (!data)
         return
@@ -91,12 +107,18 @@ export const useAppStore = defineStore('app', () => {
       leftTime.value = data.remaining_time
       isOn.value = data.is_paused === 0
 
-      if (isOn.value) {
+      if (data.is_paused === 1) {
+        counter && clearInterval(counter)
+      }
+      else {
         startCountDown()
       }
     }
     catch (error: any) {
       console.error(error?.message)
+    }
+    finally {
+      isLoading.value = false
     }
   }
 

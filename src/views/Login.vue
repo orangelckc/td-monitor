@@ -13,10 +13,10 @@ const formRef = ref<InstanceType<typeof ElForm>>()
 const rules = computed<Partial<Record<string, FormItemRule[]>>>(() => {
   return {
     account: [
-      { required: true, message: '请填写用户名', trigger: 'blur' },
+      { required: true, message: '', trigger: 'blur' },
     ],
     password: [
-      { required: true, message: '请填写密码', trigger: 'blur' },
+      { required: true, message: '', trigger: 'blur' },
     ],
   }
 })
@@ -45,28 +45,35 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <el-card class="w-4/5 h-2/3 m-auto px-3">
+  <div class="m-auto bg-[#fafafa] w-full flex-1 center">
     <ElForm
       ref="formRef"
       :model="loginForm"
       :rules="rules"
       status-icon
       :label-width="0"
+      class="w-full px-8 pt-8"
     >
       <el-form-item>
-        <img src="https://picsum.photos/id/237/600/400" alt="" class="rounded-lg w-full min-h-30 mx-auto">
+        <img src="/icon.png" alt="" class="h-30 w-30 mx-auto rounded-full">
       </el-form-item>
       <el-form-item prop="account" class="mt-6">
-        <el-input v-model="loginForm.account" placeholder="请输入账号" />
+        <el-input v-model="loginForm.account" placeholder="账号" autofocus />
       </el-form-item>
       <el-form-item prop="password">
-        <el-input v-model="loginForm.password" placeholder="请输入密码" type="password" />
+        <el-input v-model="loginForm.password" placeholder="密码" type="password" />
       </el-form-item>
       <el-form-item class="mt-6">
         <el-button type="primary" class="w-full" :loading="isLoading" @click="handleSubmit">
           登 录
         </el-button>
       </el-form-item>
+      <el-form-item>
+        <div class="flex justify-evenly text-[#999] text-xs w-full gap-2">
+          <a href="https://tdcloud.cc" target="_blank">三狗论坛</a>
+          <a href="https://shop.tdcloud.cc" target="_blank">三狗商城</a>
+        </div>
+      </el-form-item>
     </ElForm>
-  </el-card>
+  </div>
 </template>

@@ -3,6 +3,7 @@ import axiosTauriApiAdapter from 'axios-tauri-api-adapter'
 
 const client = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
+  timeout: 10000,
   adapter: axiosTauriApiAdapter,
 })
 
