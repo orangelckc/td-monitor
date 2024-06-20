@@ -29,7 +29,7 @@ jobs:
       # 发布 Release，使用自定义名称
       - name: Generate changelog
         id: create_release
-        run: npx changelogithub --draft --name KC-CLI-APP${{ steps.vars.outputs.tag }}
+        run: npx changelogithub --draft --name 三狗监控${{ steps.vars.outputs.tag }}
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
 
@@ -41,7 +41,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [macos-latest, windows-latest]
+        platform: [macos-latest, macos-12, windows-latest]
     runs-on: ${{ matrix.platform }}
 
     steps:
@@ -51,7 +51,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-      - uses: pnpm/action-setup@v2
+      - uses: pnpm/action-setup@v3
         with:
           version: latest
 
@@ -90,7 +90,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
         with:
           tagName: ${{ github.ref_name }}
-          releaseName: KC-CLI-APP ${{ needs.create-release.outputs.APP_VERSION }}
+          releaseName: 三狗监控 ${{ needs.create-release.outputs.APP_VERSION }}
           releaseBody: ''
           releaseDraft: true
           prerelease: false
