@@ -1,7 +1,7 @@
 use tauri::{AppHandle, CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu};
 
 // 加载菜单
-pub fn main_menu() -> SystemTray {
+pub fn menu() -> SystemTray {
     let tray_menu = SystemTrayMenu::new()
         .add_item(CustomMenuItem::new("show".to_string(), "显示"))
         .add_item(CustomMenuItem::new("quit".to_string(), "退出"));

@@ -1,7 +1,10 @@
-import axios from 'axios'
+import axios, { type AxiosError } from 'axios'
 import axiosTauriApiAdapter from 'axios-tauri-api-adapter'
 
-const client = axios.create({ adapter: axiosTauriApiAdapter })
+const client = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
+  adapter: axiosTauriApiAdapter,
+})
 
 client.interceptors.request.use(
   (config) => {
@@ -16,8 +19,8 @@ client.interceptors.response.use(
   (response) => {
     return response.data
   },
-  (err) => {
-    return Promise.reject(err)
+  (err: AxiosError) => {
+    return Promise.reject(err.response?.data)
   },
 )
 

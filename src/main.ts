@@ -5,7 +5,10 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import '@unocss/reset/tailwind.css'
 import 'uno.css'
+import 'element-plus/dist/index.css'
 
 const pinia = createPinia().use(piniaPluginPersistedstate)
 
-createApp(App).use(pinia).mount('#app')
+createApp(App)
+  .use(pinia)
+  .mount('#app')
