@@ -5,6 +5,7 @@ const apis = {
   loginApi: '/login/account',
   statusApi: '/service/copilot',
   toggleApi: '/service/copilot/switch',
+  usageApi: '/service/copilot/sessions',
 } as const
 
 export interface ILoginParams {
@@ -49,6 +50,32 @@ export function toggle(isOn: boolean) {
     url: apis.toggleApi,
     data: {
       is_paused: isOn ? 2 : 1,
+    },
+    headers: {
+      Authorization: `Bearer ${tokenInfo.token}`,
+    },
+  })
+}
+
+export interface IUsageResponse {
+  list: {
+    start_time: string
+    session_no: string
+    end_time: string | null
+    total_chat_req: number
+    total_prompt_req: number
+    total_req: number
+  }[]
+}
+
+export function usage() {
+  const { tokenInfo } = useAppStore()
+  return request<IUsageResponse>({
+    method: 'GET',
+    url: apis.usageApi,
+    params: {
+      page: 1,
+      limit: 1,
     },
     headers: {
       Authorization: `Bearer ${tokenInfo.token}`,

@@ -21,6 +21,7 @@ function loadTree(parent: Element, callback: Function) {
 
 watch(isLogin, (value) => {
   appWindow.setSize(value ? new LogicalSize(320, 102) : new LogicalSize(280, 366))
+  !value && appWindow.setTitle('')
   nextTick(() => {
     loadTree(containerRef.value, (el: HTMLElement) => {
       el.setAttribute('data-tauri-drag-region', '')

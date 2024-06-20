@@ -3,7 +3,7 @@
     windows_subsystem = "windows"
 )]
 
-use tauri::{generate_context, ActivationPolicy};
+use tauri::generate_context;
 mod tray;
 use tray::{handler, menu};
 
@@ -11,10 +11,7 @@ fn main() {
     tauri::Builder::default()
         .setup(|_app| {
             #[cfg(target_os = "macos")]
-            _app.set_activation_policy(ActivationPolicy::Accessory);
-
-            #[cfg(target_os = "windows")]
-            set_shadow(&_app.get_window("main").unwrap(), true).expect("Unsupported platform!");
+            _app.set_activation_policy(tauri::ActivationPolicy::Accessory);
 
             Ok(())
         })

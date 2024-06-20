@@ -1,10 +1,10 @@
-import { message } from '@tauri-apps/api/dialog'
+import { ask, message } from '@tauri-apps/api/dialog'
 import dayjs from 'dayjs'
 import { ElMessage } from 'element-plus'
 
 import type { ILoginParams, ILoginResponse } from '@/apis'
 
-import { login, status, toggle } from '@/apis'
+import { login, status, toggle, usage } from '@/apis'
 import { formatTime } from '@/utils/tools'
 
 export const useAppStore = defineStore('app', () => {
@@ -18,12 +18,85 @@ export const useAppStore = defineStore('app', () => {
   })
   const isOn = ref(false)
   const leftTime = ref(0)
+  // 空闲检测间隔，单位分钟
+  const freeInterval = ref(10)
 
   const isLoading = ref(false)
 
   const isLogin = computed(() => !!tokenInfo.token && dayjs().isBefore(dayjs(tokenInfo.expires)))
 
-  const handleLogin = async () => {
+  let lastUsage = 0
+  async function checkUsage() {
+    try {
+      const { data } = await usage()
+      if (!data)
+        return
+
+      const session = data.list[0]
+      if (!session || session.end_time) {
+        return
+      }
+      // 未结束的当前的会话
+      if (session.total_req === 0 || session.total_req === lastUsage) {
+        // 这个周期没有使用，需要 1min 后结束
+        const timer = setTimeout(() => {
+          handleSwitch(false)
+        }, 60 * 1000)
+        const isContinue = await ask('检测到长时间未使用，将在1分钟后自动关闭，是否继续使用？', {
+          title: '长时间未使用',
+          okLabel: '继续使用',
+          cancelLabel: '立即关闭',
+        })
+        // 已经超时关闭了
+        if (!isOn.value) {
+          return
+        }
+
+        if (isContinue) {
+          clearTimeout(timer)
+          return
+        }
+
+        clearTimeout(timer)
+        handleSwitch(false)
+        return
+      }
+      lastUsage = session.total_req
+    }
+    catch (error: any) {
+      console.error(error?.message)
+      ElMessage.error('获取使用情况失败')
+    }
+  }
+
+  let counter: NodeJS.Timeout
+  let checker: NodeJS.Timeout
+  function startCountDown() {
+    clearCountDown()
+
+    counter = setInterval(() => {
+      leftTime.value--
+      if (leftTime.value <= 0) {
+        clearCountDown()
+        isOn.value = false
+        ElMessage.warning('没有可用时长了')
+      }
+    }, 1000)
+
+    checker = setInterval(() => {
+      checkUsage()
+    }, freeInterval.value * 60 * 1000)
+  }
+
+  function clearCountDown() {
+    if (counter)
+      clearInterval(counter)
+    if (checker)
+      clearInterval(checker)
+    lastUsage = 0
+  }
+
+  async function handleLogin() {
     try {
       isLoading.value = true
       const { data } = await login(loginForm)
@@ -43,22 +116,16 @@ export const useAppStore = defineStore('app', () => {
     }
   }
 
-  let counter: NodeJS.Timeout
-  function startCountDown() {
-    if (counter)
-      clearInterval(counter)
+  async function handleSwitch(state: boolean) {
+    if (!isLogin.value) {
+      message('', {
+        title: '请先登录',
+        type: 'error',
+        okLabel: '关闭',
+      })
+      return
+    }
 
-    counter = setInterval(() => {
-      leftTime.value--
-      if (leftTime.value <= 0) {
-        clearInterval(counter)
-        isOn.value = false
-        ElMessage.warning('没有可用时长了')
-      }
-    }, 1000)
-  }
-
-  const handleSwitch = async (state: boolean) => {
     try {
       isLoading.value = true
       const { data } = await toggle(state)
@@ -72,7 +139,7 @@ export const useAppStore = defineStore('app', () => {
       const text = `剩余时间: ${time.hours}h${time.minutes}m${time.seconds}s`
 
       if (data.is_paused === 1) {
-        counter && clearInterval(counter)
+        clearCountDown()
       }
       else {
         message(text, {
@@ -97,7 +164,7 @@ export const useAppStore = defineStore('app', () => {
     }
   }
 
-  const checkStatus = async () => {
+  async function checkStatus() {
     try {
       isLoading.value = true
       const { data } = await status()
@@ -108,11 +175,10 @@ export const useAppStore = defineStore('app', () => {
       isOn.value = data.is_paused === 0
 
       if (data.is_paused === 1) {
-        counter && clearInterval(counter)
+        clearCountDown()
+        return
       }
-      else {
-        startCountDown()
-      }
+      startCountDown()
     }
     catch (error: any) {
       console.error(error?.message)

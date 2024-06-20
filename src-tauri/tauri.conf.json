@@ -29,7 +29,8 @@
         "setDecorations": true,
         "setSize": true,
         "setResizable": true,
-        "startDragging": true
+        "startDragging": true,
+        "setTitle": true
       },
       "dialog": {
         "message": true,
